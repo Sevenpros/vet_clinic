@@ -1,6 +1,6 @@
 ![](https://img.shields.io/badge/Microverse-blueviolet)
 
-# Project Name: VET CLINIC
+# VET CLINIC
 - This project is a database structure of veterinary clinic, with different queries you will find in the respective files.
 
 ## Getting Started
