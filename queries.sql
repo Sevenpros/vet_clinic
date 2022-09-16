@@ -53,3 +53,60 @@ JOIN owners ON owners_id = owners.id GROUP BY full_name
 HAVING COUNT (animals.name)=(SELECT MAX(mycount) 
 FROM (SELECT full_name, COUNT(animals.name) mycount 
 FROM animals JOIN owners ON owners_id = owners.id GROUP BY full_name)as m);
+
+/* WORKING WITH JOINS TABLE */ 
+
+SELECT animals.name FROM visits
+JOIN animals ON visits.animal_id = animals.id
+WHERE date_of_visit = (SELECT max(date_of_visit) FROM visits
+JOIN vets ON visits.vet_id = vets.id
+WHERE vets.name = 'Willian Tatcher');
+
+SELECT SUM(count) FROM (SELECT COUNT(animals.name) FROM visits
+JOIN animals ON visits.animal_id = animals.id
+JOIN vets ON visits.vet_id = vets.id WHERE vets.name = 'Stephanie Mendez'
+GROUP BY animals.name) AS count;
+
+SELECT vets.name AS vets, species.name AS species
+FROM specializations FULL JOIN vets ON vet_id = vets.id
+FULL JOIN species ON species_id = species.id;
+
+SELECT animals.name as animals, vets.name as vets, date_of_visit
+FROM visits JOIN animals ON visits.animal_id = animals.id
+JOIN vets ON visits.vet_id = vets.id WHERE vets.name = 'Stephanie Mendez'
+AND date_of_visit BETWEEN '2020-04-1' AND '2020-08-30';
+
+SELECT animals.name, COUNT(animals.name) FROM visits
+JOIN animals ON animal_id = animals.id GROUP BY animals.name
+HAVING COUNT (animals.name)=(SELECT MAX(mycount)
+FROM (SELECT animals.name, COUNT(animals.name) mycount
+FROM visits JOIN animals ON animal_id = animals.id GROUP BY animals.name)as m);
+
+
+SELECT animals.name FROM visits
+JOIN animals ON visits.animal_id = animals.id
+WHERE date_of_visit = (SELECT MIN(date_of_visit) FROM visits
+JOIN vets ON visits.vet_id = vets.id
+WHERE vets.name = 'Maisy Smith');
+
+ SELECT animals.name, date_of_birth, species.name AS species,
+ vets.name AS vets, vets.age, date_of_visit FROM visits JOIN animals
+ ON animal_id = animals.id JOIN vets ON vet_id = vets.id JOIN species
+ ON species_id = species.id JOIN owners ON owners_id = owners.id
+ WHERE date_of_visit = (SELECT MAX(date_of_visit) FROM visits);
+
+ SELECT species.name, COUNT(animal_id) FROM visits 
+JOIN vets ON vet_id = vets.id JOIN animals ON animal_id = animals.id 
+JOIN species ON species_id = species.id WHERE vets.name = 'Maisy Smith' GROUP BY species.name
+HAVING COUNT (animal_id) = (SELECT MAX(myc)
+FROM (SELECT species.name, COUNT(animal_id) myc FROM visits 
+JOIN vets ON vet_id = vets.id JOIN animals ON animal_id = animals.id 
+JOIN species ON species_id = species.id WHERE vets.name = 'Maisy Smith' GROUP BY species.name)
+AS m);
+
+SELECT COUNT(*) FROM visits JOIN vets ON vets.id = visits.vet_id 
+JOIN animals ON animals.id = visits.animal_id JOIN species ON 
+species.id = animals.species_id LEFT JOIN specializations ON 
+specializations.vet_id = vets.id WHERE specializations.species_id 
+IS NULL OR NOT EXISTS (SELECT * FROM specializations WHERE 
+specializations.vet_id = vets.id AND specializations.species_id = animals.species_id);
